@@ -1,18 +1,30 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { store } from './app/store';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import './index.css';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { BrowserRouter as Router } from "react-router-dom";
+import { store, persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import "./index.css";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 const root = createRoot(container);
+const theme = createTheme();
 
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <PersistGate loading={null} persistor={persistor}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router>
+            <App />
+          </Router>
+        </ThemeProvider>
+      </PersistGate>
     </Provider>
   </React.StrictMode>
 );
@@ -21,3 +33,4 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
