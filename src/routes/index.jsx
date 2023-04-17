@@ -12,12 +12,27 @@ import { setAccountInfo } from "../redux/slices/authSlice";
 import { Box, Button } from "@mui/material";
 import Homepage from "../pages/homepage";
 import ChangePassword from "../pages/changePassword";
+import UpdateMeter from "../pages/updateMeter";
 
 const SwitchRoutes = () => {
   const { accountInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   if (accountInfo) {
+    const userRoutes = [
+      { path: "/", element: <Homepage />, title: "Trang chủ" },
+      { path: "/payment", element: <Payment />, title: "Xem hoá đơn" },
+      { path: "/changePassword", element: <ChangePassword />, title: "Đổi mật khẩu" },
+    ];
+
+    const adminRoutes = [
+      { path: "/", element: <Homepage />, title: "Trang chủ" },
+      { path: "/customerLookup", element: <CustomerLookup />, title: "Cập nhật số điện" },
+      { path: "/updateMeter/:id", element: <UpdateMeter />, title: "Thông tin khách hàng", hidden: true },
+      { path: "/changePassword", element: <ChangePassword />, title: "Đổi mật khẩu" },
+    ];
+
+    const routes = accountInfo.roles[0] === "ROLE_ADMIN" ? adminRoutes : userRoutes;
     return (
       <>
         <CssBaseline />
@@ -35,9 +50,11 @@ const SwitchRoutes = () => {
               {accountInfo.username}
             </Typography>
             <Box display="flex" flex="1 0 auto" flexDirection="row" alignItems="center" justifyContent="space-evenly">
-              <Button onClick={() => navigate("/")}>Trang chủ</Button>
-              <Button onClick={() => navigate("/payment")}>Xem hoá đơn</Button>
-              <Button onClick={() => navigate("/changePassword")}>Đổi mật khẩu</Button>
+              {routes
+                .filter((route) => !route.hidden)
+                .map(({ path, title }) => (
+                  <Button key={path} onClick={() => navigate(path)}>{title}</Button>
+                ))}
             </Box>
             <Button variant="outlined" onClick={() => dispatch(setAccountInfo(undefined))}>
               Đăng xuất
@@ -45,11 +62,13 @@ const SwitchRoutes = () => {
           </Toolbar>
         </AppBar>
         <Routes>
-          <Route exact path="/payment" element={<Payment />} />
-          <Route exact path="/customerInfo" element={<CustomerInfo />} />
+          {routes.map(({ path, element }) => (
+            <Route key={path} exact path={path} element={element} />
+          ))}
+          {/* <Route exact path="/customerInfo" element={<CustomerInfo />} />
           <Route exact path="/customerLookup" element={<CustomerLookup />} />
           <Route exact path="/changePassword" element={<ChangePassword />} />
-          <Route exact path="/" element={<Homepage />} />
+          <Route exact path="/" element={<Homepage />} /> */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </>

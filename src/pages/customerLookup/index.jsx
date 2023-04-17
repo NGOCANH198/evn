@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -10,19 +10,9 @@ import MuiTableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import MuiTableRow from "@mui/material/TableRow";
 import styled from "@emotion/styled";
-
-const customers = [
-  {
-    id: "HNHD01",
-    name: "Nguyễn Ngọc Ánh",
-    address: "Trần Phú - Mộ Lao - Hà Đông - Hà Nội",
-  },
-  {
-    id: "HNHD02",
-    name: "Phạm Thuỳ Linh",
-    address: "Đặng Văn Ngữ - Trung Tự - Đống Đa - Hà Nội",
-  },
-];
+import axios from "axios";
+import { baseUrl } from "../../apis/baseUrl";
+import { Link } from "react-router-dom";
 
 const TableCell = styled(MuiTableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -45,13 +35,17 @@ const TableRow = styled(MuiTableRow)(({ theme }) => ({
 }));
 
 export default function CustomerLookup() {
+  const [customers, setCustomers] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  React.useEffect(() => {
+    axios.get(`${baseUrl}/getListCustomersInfo`).then((res) => {
+      setCustomers(res.data);
+    });
+  }, []);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      userId: data.get("userId"),
-      password: data.get("password"),
-    });
+    setSearchText(data.get("searchText"));
   };
   return (
     <Container component="main" maxWidth="md">
@@ -79,15 +73,7 @@ export default function CustomerLookup() {
             gap: 2,
           }}
         >
-          <TextField
-            margin="normal"
-            size="small"
-            id="searchText"
-            placeholder="Tìm kiếm khách hàng"
-            name="searchText"
-            autoFocus
-            sx={{ flex: "1 0 auto" }}
-          />
+          <TextField margin="normal" size="small" id="searchText" placeholder="Tìm kiếm khách hàng" name="searchText" autoFocus sx={{ flex: "1 0 auto" }} />
           <Button type="submit" variant="contained">
             Tìm kiếm
           </Button>
@@ -104,17 +90,29 @@ export default function CustomerLookup() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {customers.map((customer, index) => (
-                  <TableRow
-                    key={customer.id}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{customer.id}</TableCell>
-                    <TableCell>{customer.name}</TableCell>
-                    <TableCell>{customer.address}</TableCell>
-                  </TableRow>
-                ))}
+                {customers
+                  .filter((customer) => {
+                    if (customer.id.toLowerCase().includes(searchText.toLowerCase())) {
+                      return true;
+                    }
+                    if (customer.name.toLowerCase().includes(searchText.toLowerCase())) {
+                      return true;
+                    }
+                    if (customer.address.toLowerCase().includes(searchText.toLowerCase())) {
+                      return true;
+                    }
+                    return false;
+                  })
+                  .map((customer, index) => (
+                    <TableRow key={customer.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{customer.id}</TableCell>
+                      <TableCell>
+                        <Link to={`/updateMeter/${customer.id}`}>{customer.name}</Link>
+                      </TableCell>
+                      <TableCell>{customer.address}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
