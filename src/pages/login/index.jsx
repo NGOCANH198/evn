@@ -1,19 +1,14 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setAccountInfo } from "../../redux/slices/authSlice";
 import { baseUrl } from "../../apis/baseUrl";
+import logo from "../../assets/img/logo.jpg";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -45,26 +40,18 @@ export default function Login() {
           alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <Box>
+          <img src={logo} height={96} />
+        </Box>
         <Typography component="h1" variant="h5">
-          Sign in
+          Đăng nhập
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField margin="normal" required fullWidth id="username" label="User ID" name="username" autoFocus />
-          <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" />
-          <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+          <TextField margin="normal" required fullWidth id="username" label="Tên đăng nhập" name="username" autoFocus />
+          <TextField margin="normal" required fullWidth name="password" label="Mật khẩu" type="password" id="password" />
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-            Sign In
+            Đăng nhập
           </Button>
-          <Grid container>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>

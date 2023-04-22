@@ -16,6 +16,7 @@ import TableRow from "@mui/material/TableRow";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { baseUrl } from "../../apis/baseUrl";
+import { useNavigate } from "react-router-dom";
 
 const products = [
   {
@@ -64,17 +65,23 @@ const formula = [
 
 export default function Payment() {
   const [meterInfo, setMeterInfo] = React.useState();
-  const { code, username } = useSelector((state) => state.auth.accountInfo);
+  const [disabled, setDisabled] = React.useState(false);
+  const { username } = useSelector((state) => state.auth.accountInfo);
+  const navigate = useNavigate();
   React.useEffect(() => {
-    axios.get(`${baseUrl}/board/getAllByCustomerCode`, { params: { customerCode: code } }).then((res) => {
-      setMeterInfo(res.data.pop());
+    axios.get(`${baseUrl}/invoice/getAllByUsername`, { params: { username } }).then((res) => {
+      const data = res.data.pop();
+      setMeterInfo(data);
+      const [dd, mm, yyyy] = data.lastTimePay.split("-");
+      const lastTimePay = new Date(`${yyyy}-${mm}-${dd}`);
+      setDisabled(data.status !== "UNPAID" || lastTimePay < new Date());
     });
   }, []);
   const priceBoard = React.useMemo(() => {
     if (!meterInfo) return [];
     let res = [],
       accumulate = 0;
-    const { totalNumber } = meterInfo;
+    const { electricNumber: totalNumber } = meterInfo;
     for (const point of formula) {
       if (accumulate >= totalNumber) break;
       if (totalNumber >= point.breakpoint) {
@@ -91,7 +98,8 @@ export default function Payment() {
     { fieldName: "Mã khách hàng", value: username },
     { fieldName: "Tên khách hàng", value: "Nguyễn Ngọc Ánh" },
     { fieldName: "Địa chỉ", value: "Trần Phú - Mộ Lao - Hà Đông - Hà Nội" },
-    { fieldName: "Kì hoá đơn", value: "Từ ngày dd/mm/yyyy đến ngày dd/mm/yyyy" },
+    // { fieldName: "Kì hoá đơn", value: "Từ ngày dd/mm/yyyy đến ngày dd/mm/yyyy" },
+    { fieldName: "Hạn thanh toán", value: meterInfo?.lastTimePay },
   ];
   const getPaymentDetails = () => {
     const tax = 0.1,
@@ -128,18 +136,21 @@ export default function Payment() {
                 Thông tin khách hàng
               </Typography>
               <Grid container>
-                {customerDetails.map((detail) => (
-                  <React.Fragment key={detail.fieldName}>
-                    <Grid item xs={6}>
-                      <Typography gutterBottom sx={{ fontWeight: 700 }}>
-                        {detail.fieldName}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography gutterBottom>{detail.value}</Typography>
-                    </Grid>
-                  </React.Fragment>
-                ))}
+                {customerDetails.map((detail) => {
+                  if (!detail.value) return <React.Fragment key={detail.fieldName}></React.Fragment>;
+                  return (
+                    <React.Fragment key={detail.fieldName}>
+                      <Grid item xs={6}>
+                        <Typography gutterBottom sx={{ fontWeight: 700 }}>
+                          {detail.fieldName}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography gutterBottom>{detail.value}</Typography>
+                      </Grid>
+                    </React.Fragment>
+                  );
+                })}
               </Grid>
             </Grid>
           </Grid>
@@ -184,10 +195,13 @@ export default function Payment() {
           </List>
 
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="contained" sx={{ mt: 3, ml: 1 }} onClick={() => pay(false)}>
+            <Button variant="outlined" sx={{ mt: 3, ml: 1 }} onClick={() => navigate("/")}>
+              Quay lại
+            </Button>
+            <Button variant="contained" disabled={disabled} sx={{ mt: 3, ml: 1 }} onClick={() => pay(false)}>
               Thanh toán PayPal
             </Button>
-            <Button variant="contained" sx={{ mt: 3, ml: 1 }} onClick={() => pay(true)}>
+            <Button variant="contained" disabled={disabled} sx={{ mt: 3, ml: 1 }} onClick={() => pay(true)}>
               Thanh toán tiền mặt
             </Button>
           </Box>

@@ -1,15 +1,14 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { baseUrl } from "../../apis/baseUrl";
+import logo from "../../assets/img/logo.jpg";
 
 export default function ChangePassword() {
   const { username } = useSelector((state) => state.auth.accountInfo);
@@ -36,9 +35,9 @@ export default function ChangePassword() {
           alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <Box>
+          <img src={logo} height={96} />
+        </Box>
         <Typography component="h1" variant="h5">
           Đổi mật khẩu
         </Typography>

@@ -13,6 +13,7 @@ import { Box, Button } from "@mui/material";
 import Homepage from "../pages/homepage";
 import ChangePassword from "../pages/changePassword";
 import UpdateMeter from "../pages/updateMeter";
+import logo from "../assets/img/logo.jpg";
 
 const SwitchRoutes = () => {
   const { accountInfo } = useSelector((state) => state.auth);
@@ -28,7 +29,7 @@ const SwitchRoutes = () => {
     const adminRoutes = [
       { path: "/", element: <Homepage />, title: "Trang chủ" },
       { path: "/customerLookup", element: <CustomerLookup />, title: "Cập nhật số điện" },
-      { path: "/updateMeter/:id", element: <UpdateMeter />, title: "Thông tin khách hàng", hidden: true },
+      { path: "/updateMeter/:username", element: <UpdateMeter />, title: "Thông tin khách hàng", hidden: true },
       { path: "/changePassword", element: <ChangePassword />, title: "Đổi mật khẩu" },
     ];
 
@@ -46,17 +47,20 @@ const SwitchRoutes = () => {
           }}
         >
           <Toolbar>
-            <Typography variant="h6" color="inherit" noWrap>
-              {accountInfo.username}
-            </Typography>
+            <img src={logo} height={48} />
             <Box display="flex" flex="1 0 auto" flexDirection="row" alignItems="center" justifyContent="space-evenly">
               {routes
                 .filter((route) => !route.hidden)
                 .map(({ path, title }) => (
-                  <Button key={path} onClick={() => navigate(path)}>{title}</Button>
+                  <Button key={path} onClick={() => navigate(path)}>
+                    {title}
+                  </Button>
                 ))}
             </Box>
-            <Button variant="outlined" onClick={() => dispatch(setAccountInfo(undefined))}>
+            <Typography variant="body1" color="inherit" noWrap>
+              Xin chào, {accountInfo.username}
+            </Typography>
+            <Button sx={{ marginLeft: 1 }} variant="outlined" onClick={() => dispatch(setAccountInfo(undefined))}>
               Đăng xuất
             </Button>
           </Toolbar>

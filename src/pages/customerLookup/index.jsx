@@ -12,7 +12,7 @@ import MuiTableRow from "@mui/material/TableRow";
 import styled from "@emotion/styled";
 import axios from "axios";
 import { baseUrl } from "../../apis/baseUrl";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const TableCell = styled(MuiTableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,6 +37,7 @@ const TableRow = styled(MuiTableRow)(({ theme }) => ({
 export default function CustomerLookup() {
   const [customers, setCustomers] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const navigate = useNavigate();
   React.useEffect(() => {
     axios.get(`${baseUrl}/getListCustomersInfo`).then((res) => {
       setCustomers(res.data);
@@ -47,6 +48,18 @@ export default function CustomerLookup() {
     const data = new FormData(event.currentTarget);
     setSearchText(data.get("searchText"));
   };
+  const searchResults = customers.filter((customer) => {
+    if (customer.username.toLowerCase().includes(searchText.toLowerCase())) {
+      return true;
+    }
+    if (customer.name.toLowerCase().includes(searchText.toLowerCase())) {
+      return true;
+    }
+    if (customer.address.toLowerCase().includes(searchText.toLowerCase())) {
+      return true;
+    }
+    return false;
+  });
   return (
     <Container component="main" maxWidth="md">
       <Box
@@ -77,46 +90,40 @@ export default function CustomerLookup() {
           <Button type="submit" variant="contained">
             Tìm kiếm
           </Button>
+          <Button variant="outlined" onClick={() => navigate("/")}>
+            Quay lại
+          </Button>
         </Box>
-        <Box sx={{ mt: 4 }}>
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>STT</TableCell>
-                  <TableCell>Mã khách hàng</TableCell>
-                  <TableCell>Tên khách hàng</TableCell>
-                  <TableCell>Địa chỉ</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {customers
-                  .filter((customer) => {
-                    if (customer.id.toLowerCase().includes(searchText.toLowerCase())) {
-                      return true;
-                    }
-                    if (customer.name.toLowerCase().includes(searchText.toLowerCase())) {
-                      return true;
-                    }
-                    if (customer.address.toLowerCase().includes(searchText.toLowerCase())) {
-                      return true;
-                    }
-                    return false;
-                  })
-                  .map((customer, index) => (
-                    <TableRow key={customer.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+        {searchResults.length > 0 ? (
+          <Box sx={{ mt: 4 }}>
+            <TableContainer component={Paper}>
+              <Table aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>STT</TableCell>
+                    <TableCell>Mã khách hàng</TableCell>
+                    <TableCell>Tên khách hàng</TableCell>
+                    <TableCell>Địa chỉ</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {searchResults.map((customer, index) => (
+                    <TableRow key={customer.username} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{customer.id}</TableCell>
+                      <TableCell>{customer.username}</TableCell>
                       <TableCell>
-                        <Link to={`/updateMeter/${customer.id}`}>{customer.name}</Link>
+                        <Link to={`/updateMeter/${customer.username}`}>{customer.name}</Link>
                       </TableCell>
                       <TableCell>{customer.address}</TableCell>
                     </TableRow>
                   ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        ) : (
+          <div>Không có kết quả nào</div>
+        )}
       </Box>
     </Container>
   );

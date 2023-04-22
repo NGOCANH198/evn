@@ -13,15 +13,15 @@ export default function UpdateMeter() {
   const [timeRead, setTimeRead] = useState(new Date());
   const [oldNumber, setOldNumber] = useState(0);
   const [newNumber, setNewNumber] = useState(0);
-  const { id } = useParams();
+  const { username } = useParams();
   const navigate = useNavigate();
   React.useEffect(() => {
     axios.get(`${baseUrl}/getListCustomersInfo`).then((res) => {
-      setCustomer(res.data.find((c) => c.id === id));
+      setCustomer(res.data.find((c) => c.username === username));
     });
   }, []);
   const customerDetails = [
-    { fieldName: "Mã khách hàng", value: customer.id },
+    { fieldName: "Mã khách hàng", value: customer.username },
     { fieldName: "Tên khách hàng", value: customer.name },
     { fieldName: "Địa chỉ", value: customer.address },
   ];
@@ -32,7 +32,7 @@ export default function UpdateMeter() {
       newNumber,
       period,
       timeReadMeter: new Date(timeRead).toISOString().substring(0, 10),
-      customerCode: id,
+      username,
     };
     axios
       .post(`${baseUrl}/board/create`, payload, {
@@ -79,7 +79,7 @@ export default function UpdateMeter() {
             <Grid item xs={8}>
               <Typography gutterBottom lineHeight={2.5}>
                 Tháng{" "}
-                <TextField size="small" sx={{ maxWidth: 120 }} placeholder="mm/yyyy" type="month" value={period} onChange={(e) => setPeriod(e.target.value)} />{" "}
+                <TextField size="small" sx={{ maxWidth: 160 }} placeholder="mm/yyyy" type="month" value={period} onChange={(e) => setPeriod(e.target.value)} />{" "}
                 từ ngày <TextField size="small" sx={{ maxWidth: 160 }} placeholder="dd/mm/yyyy" type="date" /> đến ngày{" "}
                 <TextField size="small" sx={{ maxWidth: 160 }} placeholder="dd/mm/yyyy" type="date" />
               </Typography>
