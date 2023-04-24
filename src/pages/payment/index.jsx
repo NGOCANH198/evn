@@ -18,24 +18,6 @@ import { useSelector } from "react-redux";
 import { baseUrl } from "../../apis/baseUrl";
 import { useNavigate } from "react-router-dom";
 
-const products = [
-  {
-    name: "Bậc 1",
-    unitPrice: 1678,
-    amount: 50,
-  },
-  {
-    name: "Bậc 2",
-    unitPrice: 1734,
-    amount: 50,
-  },
-  {
-    name: "Bậc 3",
-    unitPrice: 2014,
-    amount: 20,
-  },
-];
-
 const formula = [
   {
     breakpoint: 50,
@@ -96,8 +78,8 @@ export default function Payment() {
   }, [meterInfo]);
   const customerDetails = [
     { fieldName: "Mã khách hàng", value: username },
-    { fieldName: "Tên khách hàng", value: "Nguyễn Ngọc Ánh" },
-    { fieldName: "Địa chỉ", value: "Trần Phú - Mộ Lao - Hà Đông - Hà Nội" },
+    { fieldName: "Tên khách hàng", value: meterInfo?.customerName},
+    { fieldName: "Địa chỉ", value: meterInfo?.address },
     // { fieldName: "Kì hoá đơn", value: "Từ ngày dd/mm/yyyy đến ngày dd/mm/yyyy" },
     { fieldName: "Hạn thanh toán", value: meterInfo?.lastTimePay },
   ];
