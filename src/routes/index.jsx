@@ -33,7 +33,7 @@ const SwitchRoutes = () => {
       { path: "/changePassword", element: <ChangePassword />, title: "Đổi mật khẩu" },
     ];
 
-    const routes = accountInfo.roles[0] === "ROLE_ADMIN" ? adminRoutes : userRoutes;
+    const routes = accountInfo.roles === "ROLE_ADMIN" ? adminRoutes : userRoutes;
     return (
       <>
         <CssBaseline />
