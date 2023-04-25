@@ -78,16 +78,16 @@ export default function Payment() {
   }, [meterInfo]);
   const customerDetails = [
     { fieldName: "Mã khách hàng", value: username },
-    { fieldName: "Tên khách hàng", value: meterInfo?.customerName},
+    { fieldName: "Tên khách hàng", value: meterInfo?.customerName },
     { fieldName: "Địa chỉ", value: meterInfo?.address },
     // { fieldName: "Kì hoá đơn", value: "Từ ngày dd/mm/yyyy đến ngày dd/mm/yyyy" },
     { fieldName: "Hạn thanh toán", value: meterInfo?.lastTimePay },
   ];
   const getPaymentDetails = () => {
     const tax = 0.1,
-      pretaxPrice = meterInfo?.totalPayment / (1 + tax);
+      pretaxPrice = Math.round(meterInfo?.totalPayment / (1 + tax));
     return [
-      { name: "Tổng điện năng tiêu thụ (kWh)", value: meterInfo?.totalNumber },
+      { name: "Tổng điện năng tiêu thụ (kWh)", value: meterInfo?.electricNumber },
       { name: "Tiền điện chưa tính thuế (đồng)", value: pretaxPrice },
       { name: "Thuế suất GTGT", value: `${tax * 100}%` },
       { name: "Thuế GTGT (đồng)", value: (meterInfo?.totalPayment - pretaxPrice).toFixed(1) },
@@ -96,11 +96,11 @@ export default function Payment() {
   };
   const pay = (withCash) => {
     if (withCash) {
-      axios.post(`${baseUrl}/payWithCash`, undefined, { params: { electricBoardId: meterInfo?.id } }).then((res) => {
+      axios.post(`${baseUrl}/payWithCash`, undefined, { params: { id: meterInfo?.id } }).then((res) => {
         alert(res.data);
       });
     } else {
-      axios.post(`${baseUrl}/pay`, undefined, { params: { electricBoardId: meterInfo?.id } }).then((res) => {
+      axios.post(`${baseUrl}/pay`, undefined, { params: { id: meterInfo?.id } }).then((res) => {
         window.open(res.data, "_blank", "noreferrer");
       });
     }
