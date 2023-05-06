@@ -29,7 +29,7 @@ const SwitchRoutes = () => {
     const adminRoutes = [
       { path: "/", element: <Homepage />, title: "Trang chủ" },
       { path: "/customerLookup", element: <CustomerLookup />, title: "Cập nhật số điện" },
-      { path: "/updateMeter/:username", element: <UpdateMeter />, title: "Thông tin khách hàng", hidden: true },
+      { path: "/updateMeter/:id", element: <UpdateMeter />, title: "Thông tin khách hàng", hidden: true },
       { path: "/changePassword", element: <ChangePassword />, title: "Đổi mật khẩu" },
     ];
 

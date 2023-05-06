@@ -6,36 +6,51 @@ import { Button, Grid, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../apis/baseUrl";
+import { useSelector } from "react-redux";
 
 export default function UpdateMeter() {
-  const [customer, setCustomer] = useState([]);
-  const [period, setPeriod] = useState(new Date());
-  const [timeRead, setTimeRead] = useState(new Date());
-  const [oldNumber, setOldNumber] = useState(0);
+  const [customer, setCustomer] = useState();
+  // const [period, setPeriod] = useState(new Date());
+  // const [timeRead, setTimeRead] = useState(new Date());
+  // const [oldNumber, setOldNumber] = useState(0);
   const [newNumber, setNewNumber] = useState(0);
-  const { username } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { customers: customerList } = useSelector((state) => state.customer);
   React.useEffect(() => {
-    axios.get(`${baseUrl}/getListCustomersInfo`).then((res) => {
-      setCustomer(res.data.find((c) => c.username === username));
-    });
-  }, []);
-  const customerDetails = [
-    { fieldName: "Mã khách hàng", value: customer.username },
-    { fieldName: "Tên khách hàng", value: customer.name },
-    { fieldName: "Địa chỉ", value: customer.address },
-  ];
+    const currentCustomer = customerList.find((c) => c.id === Number(id));
+    if (!currentCustomer) navigate("/customerLookup");
+    setCustomer(currentCustomer);
+  }, [customerList]);
+  React.useEffect(() => {
+    if (!customer?.newNumber) return;
+    setNewNumber(customer.newNumber);
+  }, [customer]);
+  const customerDetails = !customer
+    ? []
+    : [
+        { fieldName: "Mã khách hàng", value: customer.username },
+        { fieldName: "Tên khách hàng", value: customer.customerName },
+        { fieldName: "Địa chỉ", value: customer.address },
+        { fieldName: "Kì hoá đơn", value: customer.period },
+        { fieldName: "Thời gian lấy chỉ số điện", value: customer.timeReadMeter },
+        { fieldName: "Thời gian cập nhật", value: customer.timeUpdate },
+        { fieldName: "Chỉ số điện tháng trước", value: customer.oldNumber },
+        // { fieldName: "Chỉ số điện tháng này", value: customer.newNumber },
+      ];
   const onSave = () => {
+    if (!customer) return;
+    const { meterCode, oldNumber, newNumber, period, timeReadMeter } = customer;
     const payload = {
-      meterCode: customer.meterCode,
+      meterCode,
       oldNumber,
       newNumber,
       period,
-      timeReadMeter: new Date(timeRead).toISOString().substring(0, 10),
-      username,
+      timeReadMeter,
+      id,
     };
     axios
-      .post(`${baseUrl}/board/create`, payload, {
+      .post(`${baseUrl}/board/update`, payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -45,7 +60,7 @@ export default function UpdateMeter() {
       .catch((e) => alert(e));
   };
   return (
-    <Container component="main" maxWidth="lg">
+    <Container component="main" maxWidth="sm">
       <Box
         sx={{
           marginTop: 8,
@@ -59,68 +74,34 @@ export default function UpdateMeter() {
         </Typography>
         <Box sx={{ mt: 4 }}>
           <Grid container>
-            {customerDetails.map((detail) => (
-              <React.Fragment key={detail.fieldName}>
-                <Grid item xs={4}>
-                  <Typography gutterBottom sx={{ fontWeight: 700 }}>
-                    {detail.fieldName}
-                  </Typography>
-                </Grid>
-                <Grid item xs={8}>
-                  <Typography gutterBottom>{detail.value}</Typography>
-                </Grid>
-              </React.Fragment>
-            ))}
-            <Grid item xs={4}>
-              <Typography gutterBottom lineHeight={2.5} sx={{ fontWeight: 700 }}>
-                Kỳ hoá đơn
-              </Typography>
-            </Grid>
+            {customerDetails.map((detail) =>
+              detail.value ? (
+                <React.Fragment key={detail.fieldName}>
+                  <Grid item xs={8}>
+                    <Typography gutterBottom sx={{ fontWeight: 700, marginLeft: 0 }}>
+                      {detail.fieldName}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography gutterBottom>{detail.value}</Typography>
+                  </Grid>
+                </React.Fragment>
+              ) : (
+                <></>
+              )
+            )}
             <Grid item xs={8}>
-              <Typography gutterBottom lineHeight={2.5}>
-                Tháng{" "}
-                <TextField size="small" sx={{ maxWidth: 160 }} placeholder="mm/yyyy" type="month" value={period} onChange={(e) => setPeriod(e.target.value)} />{" "}
-                từ ngày <TextField size="small" sx={{ maxWidth: 160 }} placeholder="dd/mm/yyyy" type="date" /> đến ngày{" "}
-                <TextField size="small" sx={{ maxWidth: 160 }} placeholder="dd/mm/yyyy" type="date" />
-              </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography gutterBottom lineHeight={2.5} sx={{ fontWeight: 700 }}>
-                Thời gian lấy chỉ số điện
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <TextField
-                size="small"
-                sx={{ maxWidth: 160 }}
-                placeholder="dd/mm/yyyy"
-                type="date"
-                value={timeRead}
-                onChange={(e) => setTimeRead(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Typography gutterBottom lineHeight={2.5} sx={{ fontWeight: 700 }}>
-                Chỉ số điện tháng trước
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <Typography gutterBottom lineHeight={2.5}>
-                <TextField size="small" sx={{ maxWidth: 96 }} type="number" value={oldNumber} onChange={(e) => setOldNumber(Number(e.target.value))} /> kWh
-              </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography gutterBottom lineHeight={2.5} sx={{ fontWeight: 700 }}>
+              <Typography gutterBottom lineHeight={2.5} sx={{ fontWeight: 700, marginLeft: 0 }}>
                 Chỉ số điện tháng này
               </Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={4}>
               <Typography gutterBottom lineHeight={2.5}>
                 <TextField size="small" sx={{ maxWidth: 96 }} type="number" value={newNumber} onChange={(e) => setNewNumber(Number(e.target.value))} /> kWh
               </Typography>
             </Grid>
           </Grid>
-          <Box sx={{ display: "flex", justifyContent: "space-around", mt: 5 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 5, gap: 5 }}>
             <Button variant="outlined" onClick={() => navigate("/customerLookup")}>
               Huỷ
             </Button>

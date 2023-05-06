@@ -2,11 +2,13 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import counterReducer from "../slices/counterSlice";
 import authReducer from "../slices/authSlice";
+import customerReducer from "../slices/customerSlice";
 import storage from "redux-persist/lib/storage";
 import logger from "redux-logger";
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  customer: customerReducer,
   counter: counterReducer,
 });
 

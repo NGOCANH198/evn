@@ -13,6 +13,8 @@ import styled from "@emotion/styled";
 import axios from "axios";
 import { baseUrl } from "../../apis/baseUrl";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setCustomers } from "../../redux/slices/customerSlice";
 
 const TableCell = styled(MuiTableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,14 +37,38 @@ const TableRow = styled(MuiTableRow)(({ theme }) => ({
 }));
 
 export default function CustomerLookup() {
-  const [customers, setCustomers] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(undefined);
+  const [isUploading, setUploading] = useState(false);
+  // const [customers, setCustomers] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { customers } = useSelector((state) => state.customer);
+  const setCustomerList = (customerList) => {
+    dispatch(setCustomers(customerList));
+  };
   React.useEffect(() => {
-    axios.get(`${baseUrl}/getListCustomersInfo`).then((res) => {
-      setCustomers(res.data);
-    });
-  }, []);
+    if (!selectedFile) return;
+    setUploading(true);
+    const getCustomerList = async () => {
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        const res = await axios.post(`${baseUrl}/board/create`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        // const res = await axios.get(`${baseUrl}/invoice/getAll`);
+        setCustomerList(res.data);
+      } catch (e) {
+        alert(e);
+      } finally {
+        setUploading(false);
+      }
+    };
+    getCustomerList();
+  }, [selectedFile]);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -52,12 +78,12 @@ export default function CustomerLookup() {
     if (customer.username.toLowerCase().includes(searchText.toLowerCase())) {
       return true;
     }
-    if (customer.name.toLowerCase().includes(searchText.toLowerCase())) {
+    if (customer.customerName.toLowerCase().includes(searchText.toLowerCase())) {
       return true;
     }
-    if (customer.address.toLowerCase().includes(searchText.toLowerCase())) {
-      return true;
-    }
+    // if (customer.address.toLowerCase().includes(searchText.toLowerCase())) {
+    //   return true;
+    // }
     return false;
   });
   return (
@@ -75,6 +101,23 @@ export default function CustomerLookup() {
         </Typography>
         <Box
           component="form"
+          sx={{
+            width: "100%",
+            mt: 1,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <Button variant="contained" disabled={isUploading} component="label">
+            {isUploading ? "Uploading..." : "Upload file"}
+            <input hidden accept="*" type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+          </Button>
+          {selectedFile && <div>{selectedFile.name}</div>}
+        </Box>
+        <Box
+          component="form"
           onSubmit={handleSubmit}
           noValidate
           sx={{
@@ -87,6 +130,7 @@ export default function CustomerLookup() {
           }}
         >
           <TextField margin="normal" size="small" id="searchText" placeholder="Tìm kiếm khách hàng" name="searchText" autoFocus sx={{ flex: "1 0 auto" }} />
+
           <Button type="submit" variant="contained">
             Tìm kiếm
           </Button>
@@ -103,18 +147,18 @@ export default function CustomerLookup() {
                     <TableCell>STT</TableCell>
                     <TableCell>Mã khách hàng</TableCell>
                     <TableCell>Tên khách hàng</TableCell>
-                    <TableCell>Địa chỉ</TableCell>
+                    <TableCell>Kì hoá đơn</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {searchResults.map((customer, index) => (
-                    <TableRow key={customer.username} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                    <TableRow key={customer.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{customer.username}</TableCell>
                       <TableCell>
-                        <Link to={`/updateMeter/${customer.username}`}>{customer.name}</Link>
+                        <Link to={`/updateMeter/${customer.id}`}>{customer.customerName}</Link>
                       </TableCell>
-                      <TableCell>{customer.address}</TableCell>
+                      <TableCell>{customer.period}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

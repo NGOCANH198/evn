@@ -82,6 +82,7 @@ export default function Payment() {
     { fieldName: "Địa chỉ", value: meterInfo?.address },
     // { fieldName: "Kì hoá đơn", value: "Từ ngày dd/mm/yyyy đến ngày dd/mm/yyyy" },
     { fieldName: "Hạn thanh toán", value: meterInfo?.lastTimePay },
+
   ];
   const getPaymentDetails = () => {
     const tax = 0.1,
@@ -90,7 +91,7 @@ export default function Payment() {
       { name: "Tổng điện năng tiêu thụ (kWh)", value: meterInfo?.electricNumber },
       { name: "Tiền điện chưa tính thuế (đồng)", value: pretaxPrice },
       { name: "Thuế suất GTGT", value: `${tax * 100}%` },
-      { name: "Thuế GTGT (đồng)", value: (meterInfo?.totalPayment - pretaxPrice).toFixed(1) },
+      { name: "Thuế GTGT (đồng)", value: (meterInfo?.totalPayment - pretaxPrice).toFixed(0) },
       { name: "Tổng tiền điện thanh toán (đồng)", value: meterInfo?.totalPayment },
     ];
   };
