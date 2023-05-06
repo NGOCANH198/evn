@@ -97,7 +97,7 @@ export default function CustomerLookup() {
         }}
       >
         <Typography component="h1" variant="h5">
-          Tìm kiếm khách hàng
+          Cập nhật số điện
         </Typography>
         <Box
           component="form"
@@ -148,6 +148,8 @@ export default function CustomerLookup() {
                     <TableCell>Mã khách hàng</TableCell>
                     <TableCell>Tên khách hàng</TableCell>
                     <TableCell>Kì hoá đơn</TableCell>
+                    <TableCell>Chỉ số điện tháng trước</TableCell>
+                    <TableCell>Chỉ số điện tháng này</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -159,6 +161,8 @@ export default function CustomerLookup() {
                         <Link to={`/updateMeter/${customer.id}`}>{customer.customerName}</Link>
                       </TableCell>
                       <TableCell>{customer.period}</TableCell>
+                      <TableCell>{customer.oldNumber}</TableCell>
+                      <TableCell>{customer.newNumber}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
