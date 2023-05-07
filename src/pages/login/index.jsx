@@ -15,7 +15,10 @@ export default function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data);
+    if (!data.get("username") || !data.get("password")) {
+      alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu");
+      return;
+    }
     axios
       .post(`${baseUrl}/signin`, data, {
         headers: {
@@ -23,8 +26,6 @@ export default function Login() {
         },
       })
       .then((res) => {
-        console.log(res);
-        console.log(res.data);
         dispatch(setAccountInfo(res.data));
       })
       .catch((e) => alert("Tài khoản hoặc mật khẩu không đúng!"));
