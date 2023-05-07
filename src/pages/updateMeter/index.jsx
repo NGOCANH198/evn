@@ -40,17 +40,12 @@ export default function UpdateMeter() {
       ];
   const onSave = () => {
     if (!customer) return;
-    const { meterCode, oldNumber, newNumber, period, timeReadMeter } = customer;
+    const { newNumber } = customer;
     const payload = {
-      meterCode,
-      oldNumber,
       newNumber,
-      period,
-      timeReadMeter,
-      id,
     };
     axios
-      .post(`${baseUrl}/board/update`, payload, {
+      .post(`${baseUrl}/board/update/${id}`, payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
