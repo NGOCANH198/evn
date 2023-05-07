@@ -40,7 +40,6 @@ export default function UpdateMeter() {
       ];
   const onSave = () => {
     if (!customer) return;
-    const { newNumber } = customer;
     const payload = {
       newNumber,
     };
