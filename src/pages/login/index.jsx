@@ -15,7 +15,16 @@ export default function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (!data.get("username") || !data.get("password")) {
+
+    if (!data.get("username") ) {
+      alert("Vui lòng nhập Tên đăng nhập");
+      return;
+    }
+    if (!data.get("password")) {
+      alert("Vui lòng nhập Mật Khẩu");
+      return;
+    }
+    if (!data.get("username") && !data.get("password")) {
       alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu");
       return;
     }

@@ -21,27 +21,27 @@ import { useNavigate } from "react-router-dom";
 const formula = [
   {
     breakpoint: 50,
-    unitPrice: 1678,
+    unitPrice: 1728,
   },
   {
     breakpoint: 100,
-    unitPrice: 1734,
+    unitPrice: 1786,
   },
   {
     breakpoint: 200,
-    unitPrice: 2014,
+    unitPrice: 2074,
   },
   {
     breakpoint: 300,
-    unitPrice: 2536,
+    unitPrice: 2612,
   },
   {
     breakpoint: 400,
-    unitPrice: 2834,
+    unitPrice: 2919,
   },
   {
     breakpoint: Infinity,
-    unitPrice: 2927,
+    unitPrice: 3015,
   },
 ];
 
@@ -56,9 +56,15 @@ export default function Payment() {
       setMeterInfo(data);
       const [dd, mm, yyyy] = data.lastTimePay.split("-");
       const lastTimePay = new Date(`${yyyy}-${mm}-${dd}`);
-      setDisabled(data.status !== "UNPAID" || lastTimePay < new Date());
+      setDisabled(data.status !== "UNPAID" && lastTimePay < new Date());
+      if (data.status =="PAID"){alert("Bạn đã hoản thành thanh toán hoá đơn tiền điện kì này");
+  return ;}
     });
+
   }, []);
+
+  
+
   const priceBoard = React.useMemo(() => {
     if (!meterInfo) return [];
     let res = [],

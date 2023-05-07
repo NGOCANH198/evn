@@ -77,12 +77,12 @@ export default function UpdateMeter() {
             {customerDetails.map((detail) =>
               detail.value ? (
                 <React.Fragment key={detail.fieldName}>
-                  <Grid item xs={8}>
+                  <Grid item xs={7}>
                     <Typography gutterBottom sx={{ fontWeight: 700, marginLeft: 0 }}>
                       {detail.fieldName}
                     </Typography>
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid item xs={5}>
                     <Typography gutterBottom>{detail.value}</Typography>
                   </Grid>
                 </React.Fragment>
@@ -90,12 +90,12 @@ export default function UpdateMeter() {
                 <></>
               )
             )}
-            <Grid item xs={8}>
+            <Grid item xs={7}>
               <Typography gutterBottom lineHeight={2.5} sx={{ fontWeight: 700, marginLeft: 0 }}>
                 Chỉ số điện tháng này
               </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={5}>
               <Typography gutterBottom lineHeight={2.5}>
                 <TextField size="small" sx={{ maxWidth: 96 }} type="number" value={newNumber} onChange={(e) => setNewNumber(Number(e.target.value))} /> kWh
               </Typography>
