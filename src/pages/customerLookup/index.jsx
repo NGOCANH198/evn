@@ -61,8 +61,9 @@ export default function CustomerLookup() {
         });
         // const res = await axios.get(`${baseUrl}/invoice/getAll`);
         setCustomerList(res.data);
+        alert("Upload file thành công");
       } catch (e) {
-        alert(e);
+        alert("File upload không đúng định dạng, file phải có định dạng .xlxs");
       } finally {
         setUploading(false);
       }
