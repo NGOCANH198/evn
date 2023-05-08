@@ -63,7 +63,7 @@ export default function CustomerLookup() {
         setCustomerList(res.data);
         alert("Upload file thành công");
       } catch (e) {
-        alert("File upload không đúng định dạng, file phải có định dạng .xlxs");
+        alert("File upload không đúng định dạng, file phải có định dạng .xlsx hoặc .xlx");
       } finally {
         setUploading(false);
       }
